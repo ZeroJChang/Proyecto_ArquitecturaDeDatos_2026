@@ -1,7 +1,7 @@
 import { env } from '../config/env.js';
 import { guatemalaZones } from '../data/guatemalaZones.js';
 import { distanceKm, generatePointNear, movePoint, randomBetween, randomInt } from '../utils/geo.js';
-import { publishKafkaMessage } from '../kafka/kafkaPublisher.js';
+import { publishKafkaMessage } from '../kafka/kafka-publisher.js';
 
 const vehicles = new Map();
 const gpsHistory = [];
