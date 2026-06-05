@@ -19,8 +19,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY src ./src
 
-RUN npm run start
-
 # ---------- Production dependencies ----------
 FROM base AS prod-deps
 
