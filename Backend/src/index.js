@@ -1,7 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 import { env } from './config/env.js';
-import { initializeKafkaProducer } from './kafka/kafkaPublisher.js';
+import { initializeKafkaProducer } from './kafka/kafka-publisher.js';
 import { vehicleRouter } from './routes/vehicleRoutes.js';
 import { initializeVehicles, startSimulation } from './services/vehicleSimulator.js';
 
