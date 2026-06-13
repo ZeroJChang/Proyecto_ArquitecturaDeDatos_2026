@@ -1,4 +1,10 @@
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType
+from pyspark.sql.types import (
+    StructType,
+    StructField,
+    StringType,
+    DoubleType,
+    BooleanType,
+)
 
 gps_schema = StructType(
     [
@@ -14,6 +20,29 @@ gps_schema = StructType(
                 [
                     StructField("latitud", DoubleType(), True),
                     StructField("longitud", DoubleType(), True),
+                ]
+            ),
+            True,
+        ),
+    ]
+)
+
+status_schema = StructType(
+    [
+        StructField("id_vehiculo", StringType(), True),
+        StructField("vin", StringType(), True),
+        StructField("timestamp", StringType(), True),
+        StructField("tipo_trama", StringType(), True),
+        StructField("zona_referencia", StringType(), True),
+        StructField("departamento", StringType(), True),
+        StructField(
+            "telemetria",
+            StructType(
+                [
+                    StructField("estado_bateria_porcentaje", DoubleType(), True),
+                    StructField("encendido", BooleanType(), True),
+                    StructField("codigo_problema", StringType(), True),
+                    StructField("kilometraje", DoubleType(), True),
                 ]
             ),
             True,

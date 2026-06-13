@@ -28,3 +28,18 @@ docker exec -it spark-master /opt/spark/bin/spark-submit \
   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.postgresql:postgresql:42.7.3 \
   /opt/spark/jobs/pipelines/process_gps_stream.py
 ```
+
+```bash
+docker exec -it spark-master /opt/spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  --conf spark.jars.ivy=/tmp/.ivy2 \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.mongodb.spark:mongo-spark-connector_2.12:10.3.0 \
+  /opt/spark/jobs/pipelines/process_status_stream.py
+```
+
+checkear topicos del cluster
+```bash
+docker exec -it broker /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server broker:9092 \
+  --list
+```
