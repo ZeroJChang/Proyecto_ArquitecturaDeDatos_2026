@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 export const env = {
   kafkaBroker: process.env.KAFKA_BROKER || 'localhost:9092',
   kafkaTopicGps: process.env.KAFKA_TOPIC_GPS || 'acme.ev.gps',

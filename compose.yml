@@ -8,9 +8,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - proyecto
 
@@ -19,9 +19,9 @@ services:
     container_name: mongo
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}    
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
     ports:
       - "27017:27017"
     volumes:
@@ -55,18 +55,16 @@ services:
     build:
       context: ./iot-producer
       dockerfile: ./dockerfile
-      target: build
     container_name: iot-producer
     restart: unless-stopped
-    command: npm run start
     depends_on:
       - broker
     environment:
-      KAFKA_BROKER: broker:29092
-      KAFKA_TOPIC_GPS: acme.ev.gps
-      KAFKA_TOPIC_STATUS: acme.ev.status
-      SIMULATION_INTERVAL_MS: ${SIMULATION_INTERVAL_MS:-10000}
-      TOTAL_VEHICLES: ${TOTAL_VEHICLES:-20}
+      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_TOPIC_GPS: ${KAFKA_TOPIC_GPS}
+      KAFKA_TOPIC_STATUS: ${KAFKA_TOPIC_STATUS}
+      SIMULATION_INTERVAL_MS: ${SIMULATION_INTERVAL_MS}
+      TOTAL_VEHICLES: ${TOTAL_VEHICLES}
     networks:
       - proyecto
 
@@ -74,14 +72,13 @@ services:
     build:
       context: ./backend
       dockerfile: ./dockerfile
-      target: build
     container_name: acme-ev-backend
     restart: unless-stopped
-    command: npm run start
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
-      PORT: 3000
+      PORT: ${BACKEND_PORT}
+      POSTGRES_URI: ${POSTGRES_URI}
     networks:
       - proyecto
 
@@ -93,10 +90,20 @@ services:
       - "7077:7077"
       - "4040:4040"
     environment:
-      - SPARK_MODE=master
-      - PYTHONPATH=/opt/spark/jobs
+      SPARK_MODE: master
+      PYTHONPATH: /opt/spark/jobs
+      KAFKA_BROKER: ${KAFKA_BROKER}
+      KAFKA_TOPIC_GPS: ${KAFKA_TOPIC_GPS}
+      KAFKA_TOPIC_STATUS: ${KAFKA_TOPIC_STATUS}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MONGO_URI: ${MONGO_URI}
+      MONGO_DB: ${MONGO_DB}
+      SPARK_CHECKPOINT_DIR: ${SPARK_CHECKPOINT_DIR}
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
-    env_file: .env
     networks:
       - proyecto
     volumes:
@@ -109,11 +116,11 @@ services:
     depends_on:
       - spark-master
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_WORKER_MEMORY=1g
-      - SPARK_WORKER_CORES=1
-      - PYTHONPATH=/opt/spark/jobs
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_WORKER_CORES: 1
+      PYTHONPATH: /opt/spark/jobs
     command: >
       /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
       spark://spark-master:7077
@@ -122,17 +129,18 @@ services:
     volumes:
       - ./spark-data:/opt/spark/work-dir
       - ./spark/jobs:/opt/spark/jobs
+
   spark-worker-2:
     image: apache/spark:3.5.1
     container_name: spark-worker-2
     depends_on:
       - spark-master
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_WORKER_MEMORY=1g
-      - SPARK_WORKER_CORES=1
-      - PYTHONPATH=/opt/spark/jobs
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_WORKER_CORES: 1
+      PYTHONPATH: /opt/spark/jobs
     command: >
       /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
       spark://spark-master:7077
