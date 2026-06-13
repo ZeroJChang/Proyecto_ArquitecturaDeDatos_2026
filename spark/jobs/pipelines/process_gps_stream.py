@@ -1,5 +1,5 @@
 # pipelines/gps_to_postgres.py
-from pyspark.sql.functions import current_timestamp
+from pyspark.sql.functions import current_timestamp, col, to_timestamp
 
 import common.config as config
 import common.spark_session as spark_session
@@ -18,7 +18,10 @@ raw_df = kafka_reader.read(
 
 parsed_df = (
     parsers.parse_kafka_json(raw_df, schemas.gps_schema)
-    .withColumnRenamed("timestamp", "event_timestamp")
+    .withColumn("event_timestamp", to_timestamp(col("timestamp")))
+    .withColumn("latitude", col("telemetria.latitud"))
+    .withColumn("longitude", col("telemetria.longitud"))
+    .drop("timestamp", "telemetria")
     .withColumn("processed_at", current_timestamp())
 )
 
