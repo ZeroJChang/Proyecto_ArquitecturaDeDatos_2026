@@ -80,45 +80,6 @@ services:
       - ./spark-data:/opt/spark/work-dir
       - ./spark/jobs:/opt/spark/jobs
 
-  # spark-worker-2:
-  #   image: apache/spark:3.5.1
-  #   container_name: spark-worker-2
-  #   depends_on:
-  #     - spark-master
-  #   environment:
-  #     - SPARK_MODE=worker
-  #     - SPARK_MASTER_URL=spark://spark-master:7077
-  #     - SPARK_WORKER_MEMORY=1g
-  #     - SPARK_WORKER_CORES=1
-  #     - PYTHONPATH=/opt/spark/jobs
-  #   networks:
-  #     - proyecto
-  #   command: >
-  #     /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
-  #     spark://spark-master:7077
-  #   volumes:
-  #     - ./spark-data:/opt/spark/work-dir
-  #     - ./spark/jobs:/opt/spark/jobs
-
-  # spark-worker-3:
-  #   image: apache/spark:3.5.1
-  #   container_name: spark-worker-3
-  #   depends_on:
-  #     - spark-master
-  #   environment:
-  #     - SPARK_MODE=worker
-  #     - SPARK_MASTER_URL=spark://spark-master:7077
-  #     - SPARK_WORKER_MEMORY=1g
-  #     - SPARK_WORKER_CORES=1
-  #     - PYTHONPATH=/opt/spark/jobs
-  #   command: >
-  #     /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
-  #     spark://spark-master:7077
-  #   networks:
-  #     - proyecto
-  #   volumes:
-  #     - ./spark-data:/opt/spark/work-dir
-  #     - ./spark/jobs:/opt/spark/jobs
   backend-service:
     <<: *app-base
     build:
