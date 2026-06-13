@@ -1,4 +1,4 @@
-import { guatemalaZones } from './data/guatemalaZones.js';
+import { guatemalaZones } from './data/guatemala-zones.js';
 import {
   distanceKm,
   generatePointNear,
