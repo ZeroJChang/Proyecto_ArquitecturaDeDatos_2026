@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Typography, Box, TextField, Paper, Alert, Button } from '@mui/material';
+import {
+  Typography,
+  Box,
+  TextField,
+  Paper,
+  Alert,
+  Button,
+} from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -103,7 +110,7 @@ const VehiclesAdminPage: React.FC = () => {
 
   useEffect(() => {
     fetchVehicles();
-  }, [fetchVehicles]);
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -138,32 +145,36 @@ const VehiclesAdminPage: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
+      <Typography
+        variant='h4'
+        sx={{ mb: 3 }}>
         Vehicles Administration
       </Typography>
 
       <Paper sx={{ p: 2, mb: 3 }}>
         <TextField
-          label="Search by VIN"
-          variant="outlined"
-          size="small"
+          label='Search by VIN'
+          variant='outlined'
+          size='small'
           value={search}
           onChange={handleSearchChange}
-          placeholder="Enter VIN to search..."
+          placeholder='Enter VIN to search...'
           sx={{ minWidth: 300 }}
         />
       </Paper>
 
       {errors && (
         <Alert
-          severity="error"
+          severity='error'
           sx={{ mb: 2 }}
           action={
-            <Button color="inherit" size="small" onClick={fetchVehicles}>
+            <Button
+              color='inherit'
+              size='small'
+              onClick={fetchVehicles}>
               Retry
             </Button>
-          }
-        >
+          }>
           {errors}
         </Alert>
       )}
@@ -174,10 +185,10 @@ const VehiclesAdminPage: React.FC = () => {
           columns={columns}
           loading={loading}
           rowCount={total}
-          paginationMode="server"
+          paginationMode='server'
           paginationModel={paginationModel}
           onPaginationModelChange={handlePaginationChange}
-          sortingMode="server"
+          sortingMode='server'
           sortModel={sortModel}
           onSortModelChange={handleSortChange}
           pageSizeOptions={[10, 25, 50]}
