@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Typography, Box, Alert, CircularProgress } from '@mui/material';
 import { GridPaginationModel } from '@mui/x-data-grid';
+import { useLocation } from 'react-router-dom';
 
 import GpsFilters from '../components/gps/GpsFilters';
 import GpsEventTable from '../components/gps/GpsEventTable';
@@ -20,7 +21,10 @@ interface GpsEventsResponse {
 }
 
 const GpsEventsPage: React.FC = () => {
-  const [vin, setVin] = useState('');
+  const location = useLocation();
+  const stateVin = (location.state as { vin?: string })?.vin || '';
+
+  const [vin, setVin] = useState(stateVin);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [events, setEvents] = useState<GpsEvent[]>([]);

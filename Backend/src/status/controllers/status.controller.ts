@@ -68,7 +68,7 @@ export class StatusController {
   }
 
   @Get('faults')
-  @Roles(Role.BRANCH_USER)
+  @Roles(Role.BRANCH_USER, Role.ADMIN)
   @ApiOperation({
     summary: 'Obtener vehículos con fallas activas',
     description:

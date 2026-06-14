@@ -11,12 +11,16 @@ export interface VehicleWithFault {
   lastReportedAt: string;
 }
 
+export interface BranchVehicle {
+  vin: string;
+  idVehiculo: string;
+  model: string;
+  year: number;
+  codigoProblema: string;
+}
+
 export interface BranchDashboard {
-  vehicles: {
-    id: number;
-    vin: string;
-    model: string;
-    year: number;
-  }[];
-  faults: VehicleWithFault[];
+  vehicles: BranchVehicle[];
+  totalVehicles: number;
+  vehiclesWithFaults: number;
 }
