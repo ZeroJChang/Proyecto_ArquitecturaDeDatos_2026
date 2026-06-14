@@ -9,6 +9,13 @@ RUN yarn install --frozen-lockfile
 
 COPY . .
 
+# CRA injects REACT_APP_* env vars at build time
+ARG REACT_APP_API_URL
+ARG REACT_APP_APP_NAME=ACME-EV
+
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ENV REACT_APP_APP_NAME=$REACT_APP_APP_NAME
+
 RUN yarn build
 
 # ---------- Production Stage ----------
