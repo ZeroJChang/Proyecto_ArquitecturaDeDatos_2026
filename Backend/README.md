@@ -1,132 +1,98 @@
-# ACME EV Backend Simulator
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
 
-Backend en Node.js para simular datos de vehículos eléctricos de ACME EV.
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-## Funcionalidades
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-- Simula 20 vehículos eléctricos.
-- Genera datos GPS y datos de estado cada 10 segundos.
-- Mantiene correlación geográfica: un vehículo se mueve cerca de su zona asignada y no salta de Villa Nueva a Petén en pocos minutos.
-- Expone APIs REST para consultar ubicación y estado.
-- Incluye publisher de Kafka preparado, pero desactivado por defecto.
+## Description
 
-## Instalación
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Project setup
 
 ```bash
-npm install
-cp .env.example .env
-npm run dev
+$ npm install
 ```
 
-## Variables de entorno
+## Compile and run the project
 
-```env
-PORT=3000
-SIMULATION_INTERVAL_MS=10000
-KAFKA_ENABLED=false
-KAFKA_BROKER=localhost:9092
-KAFKA_TOPIC_GPS=acme.ev.gps
-KAFKA_TOPIC_STATUS=acme.ev.status
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
 ```
 
-## Endpoints
+## Run tests
 
-### Health check
+```bash
+# unit tests
+$ npm run test
 
-```http
-GET /api/health
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
 ```
 
-### Listar vehículos actuales
+## Deployment
 
-```http
-GET /api/vehicles
+When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+
+If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+
+```bash
+$ npm install -g @nestjs/mau
+$ mau deploy
 ```
 
-### Última ubicación GPS de todos los vehículos
+With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-```http
-GET /api/vehicles/gps/latest
-```
+## Resources
 
-### Último estado de todos los vehículos
+Check out a few resources that may come in handy when working with NestJS:
 
-```http
-GET /api/vehicles/status/latest
-```
+- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
+- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
+- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
+- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
+- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
+- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
+- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
+- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
-### Historial GPS general
+## Support
 
-```http
-GET /api/vehicles/gps/history?limit=100
-```
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-### Historial de estados general
+## Stay in touch
 
-```http
-GET /api/vehicles/status/history?limit=100
-```
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-### Historial GPS por vehículo
+## License
 
-```http
-GET /api/vehicles/EV-ACME-10001/gps?limit=20
-```
-
-### Historial de estado por vehículo
-
-```http
-GET /api/vehicles/EV-ACME-10001/status?limit=20
-```
-
-## Kafka
-
-Kafka está preparado pero desactivado por defecto.
-
-Cuando ya tengas Kafka configurado, cambia:
-
-```env
-KAFKA_ENABLED=true
-KAFKA_BROKER=localhost:9092
-```
-
-El backend publicará eventos en:
-
-- `acme.ev.gps`
-- `acme.ev.status`
-
-## Estructura de eventos GPS
-
-```json
-{
-  "id_vehiculo": "EV-ACME-10001",
-  "vin": "VINACMEEV0010001",
-  "timestamp": "2026-06-01T18:00:00.000Z",
-  "tipo_trama": "GPS",
-  "zona_referencia": "Villa Nueva",
-  "departamento": "Guatemala",
-  "telemetria": {
-    "latitud": 14.5251,
-    "longitud": -90.5875
-  }
-}
-```
-
-## Estructura de eventos de estado
-
-```json
-{
-  "id_vehiculo": "EV-ACME-10001",
-  "vin": "VINACMEEV0010001",
-  "timestamp": "2026-06-01T18:00:00.000Z",
-  "tipo_trama": "ESTADO",
-  "zona_referencia": "Villa Nueva",
-  "departamento": "Guatemala",
-  "telemetria": {
-    "estado_bateria_porcentaje": 78.5,
-    "encendido": true,
-    "codigo_problema": "000",
-    "kilometraje": 12450.3
-  }
-}
-```
+Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
