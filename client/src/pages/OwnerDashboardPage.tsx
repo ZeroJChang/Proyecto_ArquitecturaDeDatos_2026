@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Card, CardContent, CardActions, Button } from '@mui/material';
+import { Typography, Box, Card, CardContent, CardActions, Button, CardActionArea } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { useNavigate } from 'react-router-dom';
 
 import useRequest from '../hooks/use-request.hook';
@@ -45,6 +46,24 @@ const OwnerDashboardPage: React.FC = () => {
           No tienes vehículos asignados.
         </Typography>
       )}
+
+      <Box sx={{ mb: 3 }}>
+        <Card sx={{ maxWidth: 300 }}>
+          <CardActionArea onClick={() => navigate('/register-vehicle')}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <AppRegistrationIcon sx={{ mr: 1 }} color="primary" />
+                <Typography variant="h6" component="div">
+                  Registrar Vehículo
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Asocia un vehículo a tu cuenta ingresando su VIN.
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+        </Card>
+      </Box>
 
       <Grid container spacing={3}>
         {vehicles.map((vehicle) => (
