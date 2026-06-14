@@ -9,6 +9,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { BranchesModule } from './branches/branches.module';
 import { configuration, SchemaConfig } from './config';
+import { GpsModule } from './gps/gps.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
     AuthModule,
     BranchesModule,
     VehiclesModule,
+    GpsModule,
   ],
   controllers: [AppController],
   providers: [],
