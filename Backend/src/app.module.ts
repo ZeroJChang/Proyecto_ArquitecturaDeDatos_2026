@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
 import { configuration, SchemaConfig } from './config';
 
 @Module({
@@ -32,6 +33,7 @@ import { configuration, SchemaConfig } from './config';
     }),
     CqrsModule.forRoot(),
     HttpModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],
