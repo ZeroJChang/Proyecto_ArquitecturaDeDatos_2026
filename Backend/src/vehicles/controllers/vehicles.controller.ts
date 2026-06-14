@@ -1,5 +1,13 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { QueryBus } from '@nestjs/cqrs';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { Role } from '../../common/constants/roles.constant';
@@ -8,6 +16,9 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface';
+import { ClaimVehicleCommand } from '../commands/claim-vehicle.command';
+import { ClaimVehicleRequestDto } from '../dtos/claim-vehicle-request.dto';
+import { ClaimVehicleResponseDto } from '../dtos/claim-vehicle-response.dto';
 import { GetVehicleResponseDto } from '../dtos/get-vehicle-response.dto';
 import { GetVehiclesRequestDto } from '../dtos/get-vehicles-request.dto';
 import { GetOwnerVehiclesQuery } from '../queries/get-owner-vehicles.query';
@@ -18,7 +29,10 @@ import { GetVehiclesQuery } from '../queries/get-vehicles.query';
 @Controller('vehicles')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class VehiclesController {
-  constructor(private readonly _queryBus: QueryBus) {}
+  constructor(
+    private readonly _queryBus: QueryBus,
+    private readonly _commandBus: CommandBus,
+  ) {}
 
   @Get()
   @Roles(Role.ADMIN, Role.BRANCH_USER)
@@ -55,6 +69,28 @@ export class VehiclesController {
   @ApiResponse({ status: 403, description: 'No autorizado' })
   getOwnerVehicles(@CurrentUser() user: JwtPayload) {
     return this._queryBus.execute(new GetOwnerVehiclesQuery(user));
+  }
+
+  @Post('claim')
+  @Roles(Role.OWNER)
+  @ApiOperation({
+    summary: 'Reclamar vehículo por VIN',
+    description:
+      'Permite a un propietario reclamar un vehículo por su VIN. Si el VIN no existe, se genera un vehículo demo.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Vehículo reclamado exitosamente',
+    type: ClaimVehicleResponseDto,
+  })
+  @ApiResponse({ status: 400, description: 'VIN inválido o ya asignado' })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 403, description: 'No autorizado' })
+  claimVehicle(
+    @Body() dto: ClaimVehicleRequestDto,
+    @CurrentUser() user: JwtPayload,
+  ): Promise<ClaimVehicleResponseDto> {
+    return this._commandBus.execute(new ClaimVehicleCommand(dto.vin, user.sub));
   }
 
   @Get(':vin')

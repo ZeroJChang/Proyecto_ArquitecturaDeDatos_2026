@@ -1,12 +1,14 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { Role } from '../../common/constants/roles.constant';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { PaginationResponse } from '../../common/dtos/pagination-response.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { GetUserResponseDto } from '../dtos/get-user-response.dto';
+import { GetUserAdminResponseDto } from '../dtos/get-user-admin-response.dto';
+import { GetUsersRequestDto } from '../dtos/get-users-request.dto';
 import { GetUsersQuery } from '../queries/get-users.query';
 
 @ApiTags('users')
@@ -19,16 +21,18 @@ export class UsersController {
   @Get()
   @ApiOperation({
     summary: 'Listar usuarios',
-    description: 'Retorna todos los usuarios del sistema (solo ADMIN)',
+    description:
+      'Retorna usuarios paginados con búsqueda, filtro por rol y ordenamiento (solo ADMIN)',
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de usuarios',
-    type: [GetUserResponseDto],
+    description: 'Lista paginada de usuarios',
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'No autorizado' })
-  getUsers(): Promise<GetUserResponseDto[]> {
-    return this._queryBus.execute(new GetUsersQuery());
+  getUsers(
+    @Query() params: GetUsersRequestDto,
+  ): Promise<PaginationResponse<GetUserAdminResponseDto>> {
+    return this._queryBus.execute(new GetUsersQuery(params));
   }
 }

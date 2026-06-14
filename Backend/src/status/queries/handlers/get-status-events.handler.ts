@@ -34,6 +34,35 @@ export class GetStatusEventsHandler implements IQueryHandler<GetStatusEventsQuer
 
     // Validate branch scoping for BRANCH_USER
     if (user.role === Role.BRANCH_USER) {
+      if (!params.vin) {
+        // BRANCH_USER without VIN: return events for all vehicles in their branch
+        const branchVehicles = await this._vehicleRepository.find({
+          where: { branchId: user.branchId ?? undefined } as any,
+          select: { vin: true },
+        });
+
+        const branchVins = branchVehicles.map((v) => v.vin);
+
+        if (branchVins.length === 0) {
+          return {
+            data: [],
+            meta: {
+              total: 0,
+              page: params.page,
+              limit: params.limit,
+              totalPages: 0,
+            },
+          };
+        }
+
+        const filter = this._buildFilter(
+          branchVins,
+          params.startDate,
+          params.endDate,
+        );
+        return this._executeQuery(filter, params.page, params.limit);
+      }
+
       const vehicle = await this._vehicleRepository.findOne({
         where: { vin: params.vin },
       });
@@ -47,39 +76,81 @@ export class GetStatusEventsHandler implements IQueryHandler<GetStatusEventsQuer
       }
     }
 
-    // Validate date range
-    const startDate = new Date(params.startDate);
-    const endDate = new Date(params.endDate);
+    // Build filter based on provided params
+    const filter = this._buildFilter(
+      params.vin ? [params.vin] : undefined,
+      params.startDate,
+      params.endDate,
+    );
 
-    if (startDate > endDate) {
-      throw new BadRequestException(
-        'La fecha de inicio no puede ser mayor a la fecha de fin',
-      );
+    return this._executeQuery(filter, params.page, params.limit);
+  }
+
+  private _buildFilter(
+    vins?: string[],
+    startDate?: string,
+    endDate?: string,
+  ): Record<string, any> {
+    const filter: Record<string, any> = {};
+
+    // VIN filter
+    if (vins && vins.length === 1) {
+      filter.vin = vins[0];
+    } else if (vins && vins.length > 1) {
+      filter.vin = { $in: vins };
     }
 
-    // Query MongoDB with pagination
-    const filter = {
-      vin: params.vin,
-      event_timestamp: { $gte: startDate, $lte: endDate },
-    };
+    // Date range filter
+    if (startDate || endDate) {
+      const dateFilter: Record<string, Date> = {};
 
+      if (startDate) {
+        dateFilter.$gte = new Date(startDate);
+      }
+
+      if (endDate) {
+        dateFilter.$lte = new Date(endDate);
+      }
+
+      // Validate date range if both are provided
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start > end) {
+          throw new BadRequestException(
+            'La fecha de inicio no puede ser mayor a la fecha de fin',
+          );
+        }
+      }
+
+      filter.event_timestamp = dateFilter;
+    }
+
+    return filter;
+  }
+
+  private async _executeQuery(
+    filter: Record<string, any>,
+    page: number,
+    limit: number,
+  ): Promise<PaginationResponse<StatusEventDto>> {
     const total = await this._statusEventModel.countDocuments(filter);
-    const skip = (params.page - 1) * params.limit;
+    const skip = (page - 1) * limit;
 
     const data = await this._statusEventModel
       .find(filter)
       .sort({ event_timestamp: -1 })
       .skip(skip)
-      .limit(params.limit)
+      .limit(limit)
       .exec();
 
     return {
       data: data.map(StatusEventMapper.toDto),
       meta: {
         total,
-        page: params.page,
-        limit: params.limit,
-        totalPages: Math.ceil(total / params.limit),
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
     };
   }

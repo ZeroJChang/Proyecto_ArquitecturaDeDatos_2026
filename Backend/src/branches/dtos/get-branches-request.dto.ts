@@ -4,10 +4,10 @@ import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { PaginationParamsDto } from '../../common/dtos/pagination.params.dto';
 
-export class GetVehiclesRequestDto extends PaginationParamsDto {
+export class GetBranchesRequestDto extends PaginationParamsDto {
   @ApiProperty({
     required: false,
-    description: 'Search by VIN substring (case-insensitive)',
+    description: 'Search by branch name (case-insensitive)',
   })
   @IsOptional()
   @IsString()

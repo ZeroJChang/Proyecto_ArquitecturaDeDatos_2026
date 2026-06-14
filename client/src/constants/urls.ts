@@ -12,6 +12,7 @@ const URLS = {
   VEHICLES: '/acme-ev/vehicles',
   VEHICLE_BY_VIN: (vin: string) => `/acme-ev/vehicles/${vin}`,
   VEHICLES_OWNER: '/acme-ev/vehicles/owner',
+  VEHICLES_CLAIM: '/acme-ev/vehicles/claim',
 
   // GPS
   GPS_EVENTS: '/acme-ev/gps/events',

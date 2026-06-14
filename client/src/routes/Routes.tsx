@@ -6,6 +6,11 @@ import BranchDashboardPage from '../pages/BranchDashboardPage';
 import OwnerDashboardPage from '../pages/OwnerDashboardPage';
 import GpsEventsPage from '../pages/GpsEventsPage';
 import StatusEventsPage from '../pages/StatusEventsPage';
+import VehiclesAdminPage from '../pages/VehiclesAdminPage';
+import UsersAdminPage from '../pages/UsersAdminPage';
+import BranchesAdminPage from '../pages/BranchesAdminPage';
+import StatusEventsAdminPage from '../pages/StatusEventsAdminPage';
+import RegisterVehiclePage from '../pages/RegisterVehiclePage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 import ProtectedRoute from '../components/auth/ProtectedRoute';
@@ -66,6 +71,46 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={['ADMIN', 'BRANCH_USER']}>
             <StatusEventsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/vehicles',
+        element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            <VehiclesAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/users',
+        element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            <UsersAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/branches',
+        element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            <BranchesAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/status-events',
+        element: (
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            <StatusEventsAdminPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'register-vehicle',
+        element: (
+          <ProtectedRoute allowedRoles={['OWNER']}>
+            <RegisterVehiclePage />
           </ProtectedRoute>
         ),
       },

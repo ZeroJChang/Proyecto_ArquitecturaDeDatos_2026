@@ -1,3 +1,5 @@
+import { GetBranchesRequestDto } from '../dtos/get-branches-request.dto';
+
 export class GetBranchesQuery {
-  constructor() {}
+  constructor(public readonly params: GetBranchesRequestDto) {}
 }

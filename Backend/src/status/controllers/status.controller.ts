@@ -8,7 +8,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface';
-import { GetStatusEventsRequestDto } from '../dtos/get-status-events-request.dto';
+import { GetStatusEventsAdminRequestDto } from '../dtos/get-status-events-admin-request.dto';
 import { GetLatestStatusQuery } from '../queries/get-latest-status.query';
 import { GetStatusEventsQuery } from '../queries/get-status-events.query';
 import { GetVehiclesWithFaultsQuery } from '../queries/get-vehicles-with-faults.query';
@@ -24,7 +24,7 @@ export class StatusController {
   @ApiOperation({
     summary: 'Consultar eventos de estado operacional',
     description:
-      'Retorna eventos de estado paginados para un vehículo por VIN y rango de fechas.',
+      'Retorna eventos de estado paginados. Para ADMIN: opcionalmente filtrar por VIN y/o rango de fechas. Para BRANCH_USER: filtra por vehículos de su sucursal.',
   })
   @ApiResponse({
     status: 200,
@@ -37,7 +37,7 @@ export class StatusController {
     description: 'No autorizado o vehículo no pertenece a tu sucursal',
   })
   getStatusEvents(
-    @Query() params: GetStatusEventsRequestDto,
+    @Query() params: GetStatusEventsAdminRequestDto,
     @CurrentUser() user: JwtPayload,
   ) {
     return this._queryBus.execute(new GetStatusEventsQuery(params, user));
