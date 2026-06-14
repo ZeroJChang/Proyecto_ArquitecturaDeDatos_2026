@@ -10,6 +10,16 @@ import { Vehicle } from '../../entities/vehicle.entity';
 import { VehicleMapper } from '../../mappers/vehicle.mapper';
 import { GetVehiclesQuery } from '../get-vehicles.query';
 
+const ALLOWED_SORT_COLUMNS: Record<string, string> = {
+  vin: 'vehicle.vin',
+  idVehiculo: 'vehicle.idVehiculo',
+  model: 'vehicle.model',
+  year: 'vehicle.year',
+  branchId: 'vehicle.branchId',
+  createdAt: 'vehicle.createdAt',
+  id: 'vehicle.id',
+};
+
 @QueryHandler(GetVehiclesQuery)
 export class GetVehiclesHandler implements IQueryHandler<GetVehiclesQuery> {
   constructor(
@@ -21,20 +31,30 @@ export class GetVehiclesHandler implements IQueryHandler<GetVehiclesQuery> {
     query: GetVehiclesQuery,
   ): Promise<PaginationResponse<GetVehicleResponseDto>> {
     const { params, user } = query;
-    const { page, limit } = params;
+    const { page, limit, search, sortBy, sortOrder } = params;
 
-    const where: Record<string, unknown> = {};
+    const qb = this._vehicleRepository.createQueryBuilder('vehicle');
 
     if (user.role === Role.BRANCH_USER) {
-      where.branchId = user.branchId;
+      qb.where('vehicle.branchId = :branchId', { branchId: user.branchId });
     }
 
-    const [vehicles, total] = await this._vehicleRepository.findAndCount({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { id: 'ASC' },
-    });
+    if (search) {
+      qb.andWhere('vehicle.vin ILIKE :search', { search: `%${search}%` });
+    }
+
+    const sortColumn = sortBy && ALLOWED_SORT_COLUMNS[sortBy];
+    const order: 'ASC' | 'DESC' = sortOrder === 'DESC' ? 'DESC' : 'ASC';
+
+    if (sortColumn) {
+      qb.orderBy(sortColumn, order);
+    } else {
+      qb.orderBy('vehicle.id', 'ASC');
+    }
+
+    qb.skip((page - 1) * limit).take(limit);
+
+    const [vehicles, total] = await qb.getManyAndCount();
 
     return {
       data: vehicles.map(VehicleMapper.toDto),
