@@ -1,8 +1,49 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Alert } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  ListItemText,
+} from '@mui/material';
 
 import useAuth from '../../hooks/use-auth.hook';
 import { isValidEmail } from '../../utils/check-email.util';
+
+interface DemoUser {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
+const DEMO_USERS: DemoUser[] = [
+  { name: 'Admin Principal', email: 'admin@acme-ev.com', password: 'admin123', role: 'ADMIN' },
+  { name: 'Operador Guatemala City', email: 'branch1@acme-ev.com', password: 'branch123', role: 'BRANCH_USER' },
+  { name: 'Operador Quetzaltenango', email: 'branch2@acme-ev.com', password: 'branch123', role: 'BRANCH_USER' },
+  { name: 'Operador Escuintla', email: 'branch3@acme-ev.com', password: 'branch123', role: 'BRANCH_USER' },
+  { name: 'Propietario Uno', email: 'owner1@acme-ev.com', password: 'owner123', role: 'OWNER' },
+  { name: 'Propietario Dos', email: 'owner2@acme-ev.com', password: 'owner123', role: 'OWNER' },
+];
+
+const getRoleColor = (role: string): 'error' | 'warning' | 'info' => {
+  switch (role) {
+    case 'ADMIN':
+      return 'error';
+    case 'BRANCH_USER':
+      return 'warning';
+    case 'OWNER':
+      return 'info';
+    default:
+      return 'info';
+  }
+};
 
 const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -13,6 +54,7 @@ const LoginForm: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedDemoUser, setSelectedDemoUser] = useState('');
 
   const validateEmail = (value: string): boolean => {
     if (!value.trim()) {
@@ -34,6 +76,18 @@ const LoginForm: React.FC = () => {
     }
     setPasswordError('');
     return true;
+  };
+
+  const handleDemoUserSelect = (email: string) => {
+    const demoUser = DEMO_USERS.find((u) => u.email === email);
+    if (demoUser) {
+      setSelectedDemoUser(email);
+      setEmail(demoUser.email);
+      setPassword(demoUser.password);
+      setEmailError('');
+      setPasswordError('');
+      setServerError('');
+    }
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +138,25 @@ const LoginForm: React.FC = () => {
           {serverError}
         </Alert>
       )}
+
+      <FormControl fullWidth sx={{ mb: 1 }}>
+        <InputLabel id="demo-user-label">Usuario demo</InputLabel>
+        <Select
+          labelId="demo-user-label"
+          value={selectedDemoUser}
+          label="Usuario demo"
+          onChange={(e) => handleDemoUserSelect(e.target.value)}
+        >
+          {DEMO_USERS.map((user) => (
+            <MenuItem key={user.email} value={user.email}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                <ListItemText primary={user.name} />
+                <Chip label={user.role} size="small" color={getRoleColor(user.role)} />
+              </Box>
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
       <TextField
         label="Email"
