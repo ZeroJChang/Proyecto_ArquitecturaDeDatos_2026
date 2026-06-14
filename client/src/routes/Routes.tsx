@@ -6,6 +6,7 @@ import BranchDashboardPage from '../pages/BranchDashboardPage';
 import OwnerDashboardPage from '../pages/OwnerDashboardPage';
 import GpsEventsPage from '../pages/GpsEventsPage';
 import StatusEventsPage from '../pages/StatusEventsPage';
+import NotFoundPage from '../pages/NotFoundPage';
 
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RoleRedirect from '../components/auth/RoleRedirect';
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
             <StatusEventsPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: '*',
+        element: <NotFoundPage />,
       },
     ],
   },
