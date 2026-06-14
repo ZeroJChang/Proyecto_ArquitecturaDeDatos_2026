@@ -1,10 +1,53 @@
-FROM node:22.12.0-alpine3.21
+# ---------- Base ----------
+FROM node:22.12.0-alpine3.21 AS base
 WORKDIR /app
-RUN apk add --no-cache tini
+RUN apk add --no-cache tini libc6-compat openssl
+
+# ---------- Dependencies ----------
+FROM base AS deps
+
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm ci
+
+# ---------- Build ----------
+FROM base AS build
+
+ENV NODE_ENV=development
+
+COPY --from=deps /app/node_modules ./node_modules
+
+COPY package.json ./
+COPY nest-cli.json ./
+COPY tsconfig.json ./
+COPY tsconfig.build.json ./
 COPY src ./src
+
+RUN npm run build
+
+# ---------- Production dependencies ----------
+FROM base AS prod-deps
+
+COPY package.json package-lock.json ./
+
+# Solo dependencias de producción
+RUN npm ci --omit=dev
+
+# ---------- Runtime ----------
+FROM node:22.12.0-alpine3.21 AS prod
+WORKDIR /app
+RUN apk add --no-cache tini libc6-compat openssl
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV NODE_OPTIONS=--enable-source-maps
+
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY package.json ./
+
 USER node
+
 EXPOSE 3000
+
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "src/index.js"]
+
+CMD ["node", "dist/main.js"]
