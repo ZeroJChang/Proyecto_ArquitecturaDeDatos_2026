@@ -7,7 +7,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { BranchesModule } from './branches/branches.module';
 import { configuration, SchemaConfig } from './config';
+import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
   imports: [
@@ -34,6 +36,8 @@ import { configuration, SchemaConfig } from './config';
     CqrsModule.forRoot(),
     HttpModule,
     AuthModule,
+    BranchesModule,
+    VehiclesModule,
   ],
   controllers: [AppController],
   providers: [],
