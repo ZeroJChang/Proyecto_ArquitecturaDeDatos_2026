@@ -14,9 +14,16 @@ const MAX_STEP_KM_PER_10_SECONDS = 0.2;
 
 function buildVehicle(index) {
   const zone = guatemalaZones[index % guatemalaZones.length];
+
+  const vinPrefix = 'ACME';
+  const vinLength = 17;
+  const numericPartLength = vinLength - vinPrefix.length;
+
+  const vin = `${vinPrefix}${String(index + 1).padStart(numericPartLength, '0')}`;
+
   return {
     idVehiculo: `EV-ACME-${String(10000 + index).padStart(5, '0')}`,
-    vin: `VINACMEEV${String(10000 + index).padStart(7, '0')}`,
+    vin,
     zona: zone,
     position: generatePointNear(zone.center, zone.radiusKm / 2),
     battery: randomInt(45, 100),
