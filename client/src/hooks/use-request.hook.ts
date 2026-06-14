@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { API_URL } from '../constants/urls';
-import { getToken } from '../utils/auth-storage.util';
+import { getToken, removeToken, removeUser } from '../utils/auth-storage.util';
 import { UseRequestProps } from './interfaces/use-request.interface';
 
 const useRequest = <T>({ url, method, body, onSuccess }: UseRequestProps) => {
@@ -40,6 +40,13 @@ const useRequest = <T>({ url, method, body, onSuccess }: UseRequestProps) => {
 
       return response.data as T;
     } catch (err: any) {
+      if (err?.response?.status === 401) {
+        removeToken();
+        removeUser();
+        window.location.href = '/login';
+        return;
+      }
+
       setErrors(err?.response?.data?.error?.message || 'Something went wrong');
 
       if (throwOnError) {
