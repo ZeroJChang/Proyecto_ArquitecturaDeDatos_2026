@@ -23,7 +23,6 @@ export class GpsController {
   constructor(private readonly _queryBus: QueryBus) {}
 
   @Get('events')
-  @Roles(Role.OWNER)
   @ApiOperation({
     summary: 'Consultar eventos GPS',
     description:
