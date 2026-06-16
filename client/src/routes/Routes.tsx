@@ -61,7 +61,7 @@ const router = createBrowserRouter([
       {
         path: 'gps',
         element: (
-          <ProtectedRoute allowedRoles={['OWNER']}>
+          <ProtectedRoute allowedRoles={['ADMIN', 'OWNER']}>
             <GpsEventsPage />
           </ProtectedRoute>
         ),
