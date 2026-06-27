@@ -20,7 +20,7 @@ flowchart LR
 | Capa | Tecnología | Versión |
 |------|-----------|---------|
 | Simulador IoT | Node.js + KafkaJS | 22.12.0 |
-| Mensajería | Apache Kafka (KRaft) | latest |
+| Mensajería | Apache Kafka  | latest |
 | Procesamiento | Apache Spark (Structured Streaming) | 3.5.1 |
 | BD Relacional | PostgreSQL | 16.2 |
 | BD Documental | MongoDB | 7 |

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Between, Repository } from 'typeorm';
 
+import { Role } from '../../../common/constants';
 import { PaginationResponse } from '../../../common/dtos/pagination-response.dto';
 import { VehicleOwner } from '../../../vehicles/entities/vehicle-owner.entity';
 import { GpsEventDto } from '../../dtos/get-gps-events-response.dto';
@@ -31,7 +32,7 @@ export class GetGpsEventsHandler implements IQueryHandler<GetGpsEventsQuery> {
       relations: { vehicle: true },
     });
 
-    if (!ownership) {
+    if (![Role.ADMIN, Role.BRANCH_USER].includes(user.role) && !ownership) {
       throw new ForbiddenException('No tienes acceso a este vehículo');
     }
 
