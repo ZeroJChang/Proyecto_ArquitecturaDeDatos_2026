@@ -90,7 +90,7 @@ flowchart LR
         SIM[Simulador de Vehículos]
     end
 
-    subgraph Kafka["Apache Kafka (KRaft)"]
+    subgraph Kafka["Apache Kafka "]
         GPS_T[acme.ev.gps<br/>3 particiones]
         STATUS_T[acme.ev.status<br/>3 particiones]
     end

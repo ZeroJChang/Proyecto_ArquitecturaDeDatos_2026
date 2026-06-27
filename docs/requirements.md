@@ -162,7 +162,7 @@ La naturaleza del dato (telemetría periódica de vehículos) se alinea con stre
 
 | Componente | Tecnología | Justificación |
 |-----------|-----------|---------------|
-| Mensajería | Apache Kafka (KRaft) | Alta throughput, durabilidad, particionamiento, sin ZooKeeper |
+| Mensajería | Apache Kafka  | Alta throughput, durabilidad, particionamiento, sin ZooKeeper |
 | Procesamiento | Apache Spark Structured Streaming | Exactly-once semantics, micro-batch eficiente, conectores nativos |
 | BD Relacional | PostgreSQL | ACID, integridad referencial, joins para entidades + GPS |
 | BD Documental | MongoDB | Esquema flexible para status events con campos futuros desconocidos |
@@ -273,7 +273,7 @@ flowchart TD
 | Base de datos relacional | PostgreSQL | 16.2 |
 | Base de datos documental | MongoDB | 7 |
 | Procesamiento streaming | Apache Spark | 3.5.1 |
-| Mensajería | Apache Kafka (KRaft) | latest |
+| Mensajería | Apache Kafka  | latest |
 | Backend API | NestJS + TypeORM + Mongoose | 11 |
 | Frontend | React + MUI | 19 / v9 |
 | Lenguajes | TypeScript, Python, SQL, JavaScript | — |
