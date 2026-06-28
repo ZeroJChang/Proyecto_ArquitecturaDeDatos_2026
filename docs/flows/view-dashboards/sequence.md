@@ -52,3 +52,7 @@ sequenceDiagram
     MG-->>H: fault state
     H-->>User: 200 aggregated metrics
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)

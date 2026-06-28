@@ -16,3 +16,7 @@ graph TD
     Handler --> Mapper[Branch Mapper]
     Handler --> DB[(branches + vehicles + vehicle_owners)]
 ```
+
+---
+
+[Previous: Sequence](sequence.md) · [Flow Index](index.md) · [Next: Persistence Context](persistence.md)

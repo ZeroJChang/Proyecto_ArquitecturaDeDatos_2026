@@ -23,7 +23,7 @@ Structured Streaming re-attempts a failed batch. Because the offset is committed
 
 ## Idempotency
 
-At-least-once into PostgreSQL. The writer appends; it does not deduplicate. On replay after a partial failure, the same frame could be written twice. See [ADR-0004](../../adrs/0004-spark-checkpointing.md) "Future Considerations" for an upsert path if strict exactly-once is required.
+At-least-once into PostgreSQL. The writer appends; it does not deduplicate. On replay after a partial failure, the same frame could be written twice. See [ADR-0004](../../history/adrs/0004-spark-checkpointing.md) "Future Considerations" for an upsert path if strict exactly-once is required.
 
 ## External integration calls
 
@@ -49,3 +49,7 @@ sequenceDiagram
         Spark->>CP: commit Kafka offsets
     end
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)

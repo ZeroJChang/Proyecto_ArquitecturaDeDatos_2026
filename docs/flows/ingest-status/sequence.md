@@ -49,3 +49,7 @@ sequenceDiagram
         Spark->>CP: commit Kafka offsets
     end
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)

@@ -33,8 +33,12 @@ docker exec -it postgres-database psql -U postgres -d acme -c "SELECT COUNT(*) F
 
 ## Reset checkpoint (last resort)
 
-Clearing the checkpoint can skip/replay frames — see the [Corrupt checkpoint runbook](../../operations-guide.md#runbook-corrupt-checkpoint).
+Clearing the checkpoint can skip/replay frames — see the [Corrupt checkpoint runbook](../../operations/runbooks/corrupt-checkpoint.md).
 
 ```bash
 docker exec -it spark-master rm -rf /opt/spark/work-dir/checkpoints/acme-ev-gps
 ```
+
+---
+
+[Previous: Contract Usage](contract-usage.md) · [Flow Index](index.md)

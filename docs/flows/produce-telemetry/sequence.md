@@ -48,3 +48,7 @@ sequenceDiagram
     Kafka-->>Sim: allSettled results
     Sim->>Timer: schedule next tick (interval)
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)
