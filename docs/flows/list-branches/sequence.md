@@ -43,3 +43,7 @@ sequenceDiagram
     DB-->>H: rows
     H-->>Admin: 200 {data, meta}
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)

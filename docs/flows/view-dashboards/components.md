@@ -19,3 +19,7 @@ graph TD
     Branch --> PG
     Branch --> MG
 ```
+
+---
+
+[Previous: Sequence](sequence.md) · [Flow Index](index.md) · [Next: Contract Usage](contract-usage.md)

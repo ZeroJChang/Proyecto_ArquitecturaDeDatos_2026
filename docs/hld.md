@@ -1,6 +1,6 @@
 # High-Level Design — ACME EV Data Platform
 
-The L1 system vision. It describes what the platform is, how its parts fit together, and routes you to the deeper layers. After this, drill into a flow via [`flow-map.md`](flow-map.md) or operate the system via [`operations-guide.md`](operations-guide.md).
+The L1 system vision. It describes what the platform is, how its parts fit together, and routes you to the deeper layers. After this, browse canonical knowledge via the [Knowledge Registries](knowledge/index.md), drill into a flow via the [Flow Map](navigation/flow-map.md), or operate the system via the [Operations Guide](operations/operations-guide.md).
 
 ## Overview
 
@@ -11,9 +11,9 @@ ACME EV Data Platform is a real-time data platform for an electric-vehicle compa
 
 ## Goals
 
-- Ingest GPS and status telemetry continuously with no separate batch layer (Kappa — [ADR-0001](adrs/0001-kappa-architecture.md)).
-- Store each datum in the engine best suited to it (relational for GPS + entities, document for status — [ADR-0002](adrs/0002-polyglot-persistence.md)).
-- Enforce confidentiality: each owner sees only their own vehicles; each branch operator only their branch ([ADR-0005](adrs/0005-jwt-rbac-data-scoping.md)).
+- Ingest GPS and status telemetry continuously with no separate batch layer (Kappa — [ADR-0001](history/adrs/0001-kappa-architecture.md)).
+- Store each datum in the engine best suited to it (relational for GPS + entities, document for status — [ADR-0002](history/adrs/0002-polyglot-persistence.md)).
+- Enforce confidentiality: each owner sees only their own vehicles; each branch operator only their branch ([ADR-0005](history/adrs/0005-jwt-rbac-data-scoping.md)).
 - Preserve integrity: telemetry is append-only; events carry both `event_timestamp` (generation) and `processed_at` (ingestion).
 - Honor retention windows: GPS 30 days, status 365 days.
 
@@ -27,7 +27,7 @@ ACME EV Data Platform is a real-time data platform for an electric-vehicle compa
 
 - Not a command-and-control system: the platform reads telemetry, it does not actuate vehicles.
 - No batch/replay analytics layer (intentionally excluded by the Kappa choice).
-- No real IoT device firmware — the [Produce Telemetry](flows/produce-telemetry/) flow simulates devices and is replaced by real hardware in production.
+- No real IoT device firmware — the [Produce Telemetry](flows/produce-telemetry/index.md) flow simulates devices and is replaced by real hardware in production.
 - The backend does not write telemetry; ingestion is owned exclusively by the Spark pipelines.
 
 ## Architecture
@@ -85,21 +85,19 @@ graph TD
 
 | Container | Responsibility |
 |-----------|----------------|
-| IoT Producer | Simulates a fleet of EVs and publishes GPS + status frames to Kafka. See [Produce Telemetry](flows/produce-telemetry/). |
+| IoT Producer | Simulates a fleet of EVs and publishes GPS + status frames to Kafka. See [Produce Telemetry](flows/produce-telemetry/index.md). |
 | Apache Kafka (KRaft) | Durable, partitioned transport. Two topics: `acme.ev.gps`, `acme.ev.status` (3 partitions each). |
-| Spark Cluster | Two Structured Streaming pipelines that parse frames and write to storage. See [Ingest GPS](flows/ingest-gps/), [Ingest Status](flows/ingest-status/). |
+| Spark Cluster | Two Structured Streaming pipelines that parse frames and write to storage. See [Ingest GPS](flows/ingest-gps/index.md), [Ingest Status](flows/ingest-status/index.md). |
 | PostgreSQL | Relational entities (branches, users, vehicles, vehicle_owners) and `gps_events`. |
 | MongoDB | `status_events` collection (flexible schema for future fields). |
 | Backend API | Read API over telemetry + auth + administration, CQRS, JWT, Swagger at `/docs`. |
 | Frontend SPA | Role-based dashboards and telemetry tables. |
 
-### Authentication & authorization boundaries
-
-All `/acme-ev/*` routes except `POST /auth/login` require a valid JWT (`JwtAuthGuard`). Endpoints are further gated by `@Roles(...)` + `RolesGuard`. Data is scoped inside each handler: branch operators are limited to their `branchId`; owners to vehicles linked in `vehicle_owners`. Full rationale: [ADR-0005](adrs/0005-jwt-rbac-data-scoping.md).
+The conceptual and physical data model these containers share is owned by the [Database registry](knowledge/database.md); the interfaces between them by the [Contracts registry](knowledge/contracts.md).
 
 ## External Integrations
 
-The platform depends on a message broker (Kafka), two datastores (PostgreSQL, MongoDB), and — in production — their managed equivalents (Supabase, MongoDB Atlas). The complete dependency table, context diagram, and per-dependency degradation behavior live in [`integration-map.md`](integration-map.md). The cloud-swap decision is recorded in [ADR-0007](adrs/0007-managed-cloud-databases.md).
+The platform depends on a message broker (Kafka), two datastores (PostgreSQL, MongoDB), and — in production — their managed equivalents (Supabase, MongoDB Atlas). The complete dependency table, context diagram, and per-dependency degradation behavior live in the [Integration Map](navigation/integration-map.md). The cloud-swap decision is recorded in [ADR-0007](history/adrs/0007-managed-cloud-databases.md).
 
 ## Deployment
 
@@ -123,11 +121,7 @@ Demo credentials (seed): `admin@acme-ev.com` / `admin123` (ADMIN), `branch1@acme
 
 ## Security
 
-- **AuthN:** stateless HMAC-signed JWT (`@nestjs/jwt`), claims `{ sub, email, role, branchId }`. Passwords hashed with bcrypt.
-- **AuthZ:** role-based (`ADMIN`, `BRANCH_USER`, `OWNER`) plus per-handler data scoping.
-- **Secrets:** environment variables from a single root `.env`; never committed.
-- **Transport:** HTTPS in production; CORS restricted to `WEB_APP_URL`.
-- **Encryption at rest:** provided by the managed databases in production.
+The platform authenticates with stateless JWTs and authorizes with roles plus per-handler data scoping, so each owner sees only their vehicles and each branch operator only their branch. Secrets come from a single root `.env`; transport is HTTPS with CORS restricted in production. The full trust-boundary model, sensitive-data handling, controls, and known gaps are owned by [Security](security.md); the scoping rationale is in [ADR-0005](history/adrs/0005-jwt-rbac-data-scoping.md).
 
 ## Scalability
 
@@ -142,24 +136,26 @@ Expected load at year 1: ~10,000 vehicles emitting GPS every 30s and status ever
 | Backend | Stateless — add replicas behind a load balancer. |
 | Frontend | Static assets via CDN. |
 
-Primary bottleneck is sustained write throughput into the datastores; partitioning/sharding addresses it. Detailed 5-year projections are summarized here; operational thresholds are in [`observability.md`](observability.md).
+Primary bottleneck is sustained write throughput into the datastores; partitioning/sharding addresses it. Detailed 5-year projections are summarized here; operational thresholds are in [Observability](operations/observability.md).
 
 ## Failure Recovery
 
 - **High availability:** managed databases run multi-AZ/replica-set in production.
-- **Retries:** Spark commits a Kafka offset only after a successful write, so a failed batch reprocesses from the last committed offset ([ADR-0004](adrs/0004-spark-checkpointing.md)).
+- **Retries:** Spark commits a Kafka offset only after a successful write, so a failed batch reprocesses from the last committed offset ([ADR-0004](history/adrs/0004-spark-checkpointing.md)).
 - **Failover:** Supabase PITR and Atlas continuous backup provide point-in-time restore.
-- **Targets:** system RTO ~30 min (typical partial failure < 5 min); RPO < 1 min for telemetry. Component-level targets and the recovery decision tree are in [`operations-guide.md`](operations-guide.md).
+- **Targets:** system RTO ~30 min (typical partial failure < 5 min); RPO < 1 min for telemetry. Component-level targets and the recovery decision tree are in the [Operations Guide](operations/operations-guide.md).
 
 ## Navigation
 
-- [`flow-map.md`](flow-map.md) — all flows grouped by business capability
-- [`integration-map.md`](integration-map.md) — external systems and blast radius
-- [`decision-index.md`](decision-index.md) — index of architectural decisions
-- [`operations-guide.md`](operations-guide.md) and [`observability.md`](observability.md) — operate and monitor the system
+- [Flow Map](navigation/flow-map.md) — all flows grouped by business capability
+- [Knowledge Registries](knowledge/index.md) — canonical domain, contracts, and database knowledge
+- [Integration Map](navigation/integration-map.md) — external systems and blast radius
+- [Security](security.md) — trust boundaries, identity, and controls
+- [Decision Index](history/decision-index.md) — index of architectural decisions
+- [Operations Guide](operations/operations-guide.md) and [Observability](operations/observability.md) — operate and monitor the system
 
 ## References
 
-- [ADR-0001](adrs/0001-kappa-architecture.md), [ADR-0002](adrs/0002-polyglot-persistence.md), [ADR-0003](adrs/0003-kafka-kraft-broker.md) shaped the streaming + storage core.
-- External docs, specs, and dashboards: [`references.md`](references.md).
-- Shared vocabulary: [`glossary.md`](glossary.md).
+- [ADR-0001](history/adrs/0001-kappa-architecture.md), [ADR-0002](history/adrs/0002-polyglot-persistence.md), [ADR-0003](history/adrs/0003-kafka-kraft-broker.md) shaped the streaming + storage core.
+- External docs, specs, and dashboards: [References](knowledge/references.md).
+- Shared vocabulary: [Glossary](knowledge/glossary.md).

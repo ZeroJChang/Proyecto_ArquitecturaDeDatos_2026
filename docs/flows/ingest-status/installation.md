@@ -31,8 +31,12 @@ docker exec -it mongo mongosh --quiet --eval "db.getSiblingDB('acme').status_eve
 
 ## Reset checkpoint (last resort)
 
-Clearing the checkpoint can skip/replay frames — see the [Corrupt checkpoint runbook](../../operations-guide.md#runbook-corrupt-checkpoint).
+Clearing the checkpoint can skip/replay frames — see the [Corrupt checkpoint runbook](../../operations/runbooks/corrupt-checkpoint.md).
 
 ```bash
 docker exec -it spark-master rm -rf /opt/spark/work-dir/checkpoints/acme-ev-status
 ```
+
+---
+
+[Previous: Contract Usage](contract-usage.md) · [Flow Index](index.md)

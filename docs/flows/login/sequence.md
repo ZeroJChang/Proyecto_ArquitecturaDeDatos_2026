@@ -52,3 +52,7 @@ sequenceDiagram
         H-->>Client: 401 Credenciales inválidas
     end
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)

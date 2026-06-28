@@ -44,3 +44,7 @@ sequenceDiagram
     H->>H: map to DTO (drop password)
     H-->>Admin: 200 {data, meta}
 ```
+
+---
+
+[Flow Index](index.md) · [Next: Components](components.md)
